@@ -8,7 +8,10 @@ project created in order to put into practice the content learned in nestJS. Eve
 
 ## Documentation
 
+````bash
+# first API must be running
 <a href="http://localhost:3333/docs/#/" target="blank"> Swagger </a>
+````
 
 ## Clone repository
 
@@ -18,12 +21,12 @@ $ git clone
 
 # enter
 $  git clone https://github.com/Hoffmann-Ferreira/Car-parts-store.git
-
+````
 
 ## Installation
 
-```bash
-$ npm install
+````bash
+npm install
 ````
 
 ## Running the app
