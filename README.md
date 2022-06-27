@@ -10,8 +10,10 @@ project created in order to put into practice the content learned in nestJS. Eve
 
 ````bash
 # first API must be running
-<a href="http://localhost:3333/docs/#/" target="blank"> Swagger </a>
 ````
+
+<a href="http://localhost:3333/docs/#/" target="blank"> Swagger </a>
+
 
 ## Clone repository
 
