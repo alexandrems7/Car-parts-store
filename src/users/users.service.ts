@@ -11,7 +11,11 @@ export class UsersService {
     return this.prisma.user.findMany();
   }
 
-  create(createUserDto: CreatUserDto) {
+  getById(id: string): Promise<User> {
+    return this.prisma.user.findUnique({ where: { id } });
+  }
+
+  create(createUserDto: CreatUserDto): Promise<User> {
     return this.prisma.user.create({ data: createUserDto });
   }
 }
