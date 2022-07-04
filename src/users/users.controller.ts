@@ -32,7 +32,7 @@ export class UsersController {
 
   @Post()
   @ApiOperation({ summary: 'register new users' })
-  create(@Body() createUserDto: CreatUserDto): Promise<User> {
+  create(@Body() createUserDto: CreatUserDto): Promise<User | void> {
     return this.usersService.create(createUserDto);
   }
 

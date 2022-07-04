@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { Product } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -24,11 +28,21 @@ export class ProductsService {
     return product;
   }
 
+  handleErrorUnique(error: Error): never {
+    const splitedMessage = error.message.split('`');
+
+    const errorMenssage = `input ${
+      splitedMessage[splitedMessage.length - 2]
+    } is not a single constraint UNIQUE`;
+
+    throw new UnprocessableEntityException(errorMenssage);
+  }
+
   findOne(id: string) {
     return this.verifyIdandReturnProduct(id);
   }
 
-  create(createProductDto: CreateProductDto): Promise<Product> {
+  async create(createProductDto: CreateProductDto): Promise<Product | void> {
     const data: CreateProductDto = {
       title: createProductDto.title,
       description: createProductDto.description,
@@ -36,7 +50,7 @@ export class ProductsService {
       image: createProductDto.image,
     };
 
-    return this.prisma.product.create({ data });
+    return this.prisma.product.create({ data }).catch(this.handleErrorUnique);
   }
 
   async remove(id: string) {
@@ -54,9 +68,11 @@ export class ProductsService {
   ): Promise<Product | void> {
     await this.verifyIdandReturnProduct(id);
 
-    return this.prisma.product.update({
-      where: { id },
-      data: updateProductDto,
-    });
+    return this.prisma.product
+      .update({
+        where: { id },
+        data: updateProductDto,
+      })
+      .catch(this.handleErrorUnique);
   }
 }

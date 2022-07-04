@@ -32,7 +32,7 @@ export class ProductsController {
 
   @Post()
   @ApiOperation({ summary: 'register new proudct' })
-  create(@Body() createProductDto: CreateProductDto): Promise<Product> {
+  create(@Body() createProductDto: CreateProductDto): Promise<Product | void> {
     return this.productsService.create(createProductDto);
   }
 

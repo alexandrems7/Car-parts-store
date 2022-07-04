@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreatUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from '@prisma/client';
@@ -23,12 +27,22 @@ export class UsersService {
     return user;
   }
 
+  handleErrorUniquer(error: Error): never {
+    const splitedMessage = error.message.split('`');
+
+    const errorMenssage = `input ${
+      splitedMessage[splitedMessage.length - 2]
+    } is not a single constraint UNIQUE`;
+
+    throw new UnprocessableEntityException(errorMenssage);
+  }
+
   findOne(id: string) {
     return this.verifyIdandReturnUser(id);
   }
 
-  create(createUserDto: CreatUserDto): Promise<User> {
-    const hashedPassword = bcrypt.hashSync(createUserDto.password, 8);
+  async create(createUserDto: CreatUserDto): Promise<User | void> {
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 8);
 
     const data: CreatUserDto = {
       name: createUserDto.name,
@@ -36,7 +50,7 @@ export class UsersService {
       password: hashedPassword,
     };
 
-    return this.prisma.user.create({ data });
+    return this.prisma.user.create({ data }).catch(this.handleErrorUniquer);
   }
 
   async remove(id: string) {
@@ -51,6 +65,8 @@ export class UsersService {
   async update(id: string, updateUserdto: UpdateUserDto): Promise<User | void> {
     await this.verifyIdandReturnUser(id);
 
-    return this.prisma.user.update({ where: { id }, data: updateUserdto });
+    return this.prisma.user
+      .update({ where: { id }, data: updateUserdto })
+      .catch(this.handleErrorUniquer);
   }
 }
