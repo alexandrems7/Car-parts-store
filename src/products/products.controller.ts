@@ -11,6 +11,7 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Product } from './entities/product.entity';
 
 @ApiTags('products')
 @Controller('products')
@@ -25,8 +26,8 @@ export class ProductsController {
 
   @Get()
   @ApiOperation({ summary: 'list all products present in the database' })
-  findAll() {
-    return this.productsService.findAll();
+  getAll(): Promise<Product[]> {
+    return this.productsService.getAll();
   }
 
   @Get(':id')
