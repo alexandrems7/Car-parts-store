@@ -36,7 +36,7 @@ export class UsersService {
     });
   }
 
-  update(id: string, updateUserdto: UpdateUserDto) {
+  update(id: string, updateUserdto: UpdateUserDto): Promise<User | void> {
     return this.prisma.user.update({ where: { id }, data: updateUserdto });
   }
 }

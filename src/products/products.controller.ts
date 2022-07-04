@@ -20,7 +20,7 @@ export class ProductsController {
 
   @Post()
   @ApiOperation({ summary: 'register new proudct' })
-  create(@Body() createProductDto: CreateProductDto) {
+  create(@Body() createProductDto: CreateProductDto): Promise<Product> {
     return this.productsService.create(createProductDto);
   }
 
@@ -32,13 +32,16 @@ export class ProductsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'search pruduct by id' })
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(id);
+  getById(@Param('id') id: string): Promise<Product> {
+    return this.productsService.getById(id);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'update a product' })
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ): Promise<Product | void> {
     return this.productsService.update(id, updateProductDto);
   }
 
