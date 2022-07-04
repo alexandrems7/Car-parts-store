@@ -20,14 +20,14 @@ export class ProductsController {
 
   @Get()
   @ApiOperation({ summary: 'list all products present in the database' })
-  getAll(): Promise<Product[]> {
-    return this.productsService.getAll();
+  findAll(): Promise<Product[]> {
+    return this.productsService.findAll();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'search pruduct by id' })
-  getById(@Param('id') id: string): Promise<Product> {
-    return this.productsService.getById(id);
+  findOne(@Param('id') id: string): Promise<Product> {
+    return this.productsService.findOne(id);
   }
 
   @Post()
@@ -38,8 +38,8 @@ export class ProductsController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'delete a product' })
-  delete(@Param('id') id: string) {
-    return this.productsService.delete(id);
+  remove(@Param('id') id: string) {
+    return this.productsService.remove(id);
   }
 
   @Patch(':id')
