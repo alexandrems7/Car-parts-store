@@ -8,6 +8,14 @@ import { UpdateProductDto } from './dto/update-product.dto';
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  getAll(): Promise<Product[]> {
+    return this.prisma.product.findMany();
+  }
+
+  getById(id: string): Promise<Product> {
+    return this.prisma.product.findUnique({ where: { id } });
+  }
+
   create(createProductDto: CreateProductDto): Promise<Product> {
     const data: CreateProductDto = {
       title: createProductDto.title,
@@ -19,12 +27,11 @@ export class ProductsService {
     return this.prisma.product.create({ data });
   }
 
-  getAll(): Promise<Product[]> {
-    return this.prisma.product.findMany();
-  }
-
-  getById(id: string): Promise<Product> {
-    return this.prisma.product.findUnique({ where: { id } });
+  delete(id: string) {
+    return this.prisma.product.delete({
+      where: { id },
+      select: { title: true, description: true },
+    });
   }
 
   update(
@@ -34,13 +41,6 @@ export class ProductsService {
     return this.prisma.product.update({
       where: { id },
       data: updateProductDto,
-    });
-  }
-
-  remove(id: string) {
-    return this.prisma.product.delete({
-      where: { id },
-      select: { title: true, description: true },
     });
   }
 }
