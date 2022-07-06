@@ -25,11 +25,14 @@ export class OrderService {
     return this.prisma.order.findUnique({ where: { id } });
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  update(id: number, updateOrderDto: UpdateOrderDto): Promise<Order | void> {
+    return this.prisma.order.update({ where: { id }, data: updateOrderDto });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} order`;
+    return this.prisma.order.delete({
+      where: { id },
+      select: { number: true },
+    });
   }
 }
