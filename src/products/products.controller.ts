@@ -18,6 +18,12 @@ import { Product } from './entities/product.entity';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @Post()
+  @ApiOperation({ summary: 'register new proudct' })
+  create(@Body() createProductDto: CreateProductDto): Promise<Product | void> {
+    return this.productsService.create(createProductDto);
+  }
+
   @Get()
   @ApiOperation({ summary: 'list all products present in the database' })
   findAll(): Promise<Product[]> {
@@ -30,18 +36,6 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
-  @Post()
-  @ApiOperation({ summary: 'register new proudct' })
-  create(@Body() createProductDto: CreateProductDto): Promise<Product | void> {
-    return this.productsService.create(createProductDto);
-  }
-
-  @Delete(':id')
-  @ApiOperation({ summary: 'delete a product' })
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(id);
-  }
-
   @Patch(':id')
   @ApiOperation({ summary: 'update a product' })
   update(
@@ -49,5 +43,11 @@ export class ProductsController {
     @Body() updateProductDto: UpdateProductDto,
   ): Promise<Product | void> {
     return this.productsService.update(id, updateProductDto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'delete a product' })
+  remove(@Param('id') id: string) {
+    return this.productsService.remove(id);
   }
 }

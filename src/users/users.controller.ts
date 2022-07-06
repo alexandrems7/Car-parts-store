@@ -18,6 +18,12 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Post()
+  @ApiOperation({ summary: 'register new users' })
+  create(@Body() createUserDto: CreatUserDto): Promise<User | void> {
+    return this.usersService.create(createUserDto);
+  }
+
   @Get()
   @ApiOperation({ summary: 'list all users present in the database' })
   findAll(): Promise<User[]> {
@@ -30,18 +36,6 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
-  @Post()
-  @ApiOperation({ summary: 'register new users' })
-  create(@Body() createUserDto: CreatUserDto): Promise<User | void> {
-    return this.usersService.create(createUserDto);
-  }
-
-  @Delete(':id')
-  @ApiOperation({ summary: 'delete user' })
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
-  }
-
   @Patch(':id')
   @ApiOperation({ summary: 'update user' })
   update(
@@ -49,5 +43,11 @@ export class UsersController {
     @Body() updateUserdto: UpdateUserDto,
   ): Promise<User | void> {
     return this.usersService.update(id, updateUserdto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'delete user' })
+  remove(@Param('id') id: string) {
+    return this.usersService.remove(id);
   }
 }

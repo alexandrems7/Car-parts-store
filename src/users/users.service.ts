@@ -13,6 +13,22 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async create(createUserDto: CreatUserDto): Promise<User | void> {
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 8);
+
+    const data: CreatUserDto = {
+      name: createUserDto.name,
+      email: createUserDto.email,
+      password: hashedPassword,
+    };
+
+    const newUser = await this.prisma.user
+      .create({ data })
+      .catch(this.handleErrorUniquer);
+
+    return newUser;
+  }
+
   findAll(): Promise<User[]> {
     return this.prisma.user.findMany();
   }
@@ -41,16 +57,12 @@ export class UsersService {
     return this.verifyIdandReturnUser(id);
   }
 
-  async create(createUserDto: CreatUserDto): Promise<User | void> {
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 8);
+  async update(id: string, updateUserdto: UpdateUserDto): Promise<User | void> {
+    await this.verifyIdandReturnUser(id);
 
-    const data: CreatUserDto = {
-      name: createUserDto.name,
-      email: createUserDto.email,
-      password: hashedPassword,
-    };
-
-    return this.prisma.user.create({ data }).catch(this.handleErrorUniquer);
+    return this.prisma.user
+      .update({ where: { id }, data: updateUserdto })
+      .catch(this.handleErrorUniquer);
   }
 
   async remove(id: string) {
@@ -60,13 +72,5 @@ export class UsersService {
       where: { id },
       select: { name: true, email: true },
     });
-  }
-
-  async update(id: string, updateUserdto: UpdateUserDto): Promise<User | void> {
-    await this.verifyIdandReturnUser(id);
-
-    return this.prisma.user
-      .update({ where: { id }, data: updateUserdto })
-      .catch(this.handleErrorUniquer);
   }
 }

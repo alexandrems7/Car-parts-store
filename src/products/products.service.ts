@@ -12,6 +12,21 @@ import { UpdateProductDto } from './dto/update-product.dto';
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async create(createProductDto: CreateProductDto): Promise<Product | void> {
+    const data: CreateProductDto = {
+      title: createProductDto.title,
+      description: createProductDto.description,
+      price: createProductDto.price,
+      image: createProductDto.image,
+    };
+
+    const newProduct = await this.prisma.product
+      .create({ data })
+      .catch(this.handleErrorUnique);
+
+    return newProduct;
+  }
+
   findAll(): Promise<Product[]> {
     return this.prisma.product.findMany();
   }
@@ -42,26 +57,6 @@ export class ProductsService {
     return this.verifyIdandReturnProduct(id);
   }
 
-  async create(createProductDto: CreateProductDto): Promise<Product | void> {
-    const data: CreateProductDto = {
-      title: createProductDto.title,
-      description: createProductDto.description,
-      price: createProductDto.price,
-      image: createProductDto.image,
-    };
-
-    return this.prisma.product.create({ data }).catch(this.handleErrorUnique);
-  }
-
-  async remove(id: string) {
-    await this.verifyIdandReturnProduct(id);
-
-    return this.prisma.product.delete({
-      where: { id },
-      select: { title: true, description: true },
-    });
-  }
-
   async update(
     id: string,
     updateProductDto: UpdateProductDto,
@@ -74,5 +69,14 @@ export class ProductsService {
         data: updateProductDto,
       })
       .catch(this.handleErrorUnique);
+  }
+
+  async remove(id: string) {
+    await this.verifyIdandReturnProduct(id);
+
+    return this.prisma.product.delete({
+      where: { id },
+      select: { title: true, description: true },
+    });
   }
 }
