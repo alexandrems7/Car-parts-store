@@ -26,7 +26,7 @@ export class OrderController {
 
   @ApiOperation({ summary: 'list all orders present in the database' })
   @Get()
-  findAll() {
+  findAll(): Promise<Order[]> {
     return this.orderService.findAll();
   }
 

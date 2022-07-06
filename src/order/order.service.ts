@@ -17,8 +17,8 @@ export class OrderService {
     return newOrder;
   }
 
-  findAll() {
-    return `This action returns all order`;
+  findAll(): Promise<Order[]> {
+    return this.prisma.order.findMany();
   }
 
   findOne(id: number) {
