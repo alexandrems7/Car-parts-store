@@ -32,3 +32,12 @@ model Product {
 
   @@map("product")
 }
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  number    Int      @unique
+  createdAt DateTime @default(now()) @map("creat_at")
+  updatedAt DateTime @updatedAt @map("update_at")
+
+  @@map("order")
+}
