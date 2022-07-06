@@ -11,6 +11,7 @@ import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Order } from './entities/order.entity';
 
 @ApiTags('products')
 @Controller('order')
@@ -19,7 +20,7 @@ export class OrderController {
 
   @ApiOperation({ summary: 'register new order' })
   @Post()
-  create(@Body() createOrderDto: CreateOrderDto) {
+  create(@Body() createOrderDto: CreateOrderDto): Promise<Order | void> {
     return this.orderService.create(createOrderDto);
   }
 
