@@ -37,7 +37,7 @@ export class ProductsController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'update a product' })
+  @ApiOperation({ summary: 'update an product' })
   update(
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
