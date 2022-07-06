@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, Param } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  Param,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { Order } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -12,7 +17,9 @@ export class OrderService {
     const data: CreateOrderDto = {
       number: createOrderDto.number,
     };
-    const newOrder = await this.prisma.order.create({ data });
+    const newOrder = await this.prisma.order
+      .create({ data })
+      .catch(this.handleErrorUnique);
 
     return newOrder;
   }
@@ -31,6 +38,16 @@ export class OrderService {
     return order;
   }
 
+  handleErrorUnique(error: Error): never {
+    const splitedMessage = error.message.split('`');
+
+    const errorMessage = `input ${
+      splitedMessage[splitedMessage.length - 2]
+    } is not a single constraint UNIQUE`;
+
+    throw new UnprocessableEntityException(errorMessage);
+  }
+
   findOne(@Param('id') id: number): Promise<Order> {
     return this.veriflyIdAndReturnOrder(id);
   }
@@ -41,7 +58,9 @@ export class OrderService {
   ): Promise<Order | void> {
     await this.veriflyIdAndReturnOrder(id);
 
-    return this.prisma.order.update({ where: { id }, data: updateOrderDto });
+    return this.prisma.order
+      .update({ where: { id }, data: updateOrderDto })
+      .catch(this.handleErrorUnique);
   }
 
   async remove(id: number) {
