@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Param } from '@nestjs/common';
 import { Order } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -21,8 +21,8 @@ export class OrderService {
     return this.prisma.order.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  findOne(@Param('id') id: number): Promise<Order> {
+    return this.prisma.order.findUnique({ where: { id } });
   }
 
   update(id: number, updateOrderDto: UpdateOrderDto) {

@@ -32,7 +32,7 @@ export class OrderController {
 
   @ApiOperation({ summary: 'search an order for id' })
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number): Promise<Order> {
     return this.orderService.findOne(+id);
   }
 
