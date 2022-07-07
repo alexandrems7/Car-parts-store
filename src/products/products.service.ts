@@ -13,15 +13,8 @@ export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createProductDto: CreateProductDto): Promise<Product | void> {
-    const data: CreateProductDto = {
-      title: createProductDto.title,
-      description: createProductDto.description,
-      price: createProductDto.price,
-      image: createProductDto.image,
-    };
-
     const newProduct = await this.prisma.product
-      .create({ data })
+      .create({ data: createProductDto })
       .catch(this.handleErrorUnique);
 
     return newProduct;
