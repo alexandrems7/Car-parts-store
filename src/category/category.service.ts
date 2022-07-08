@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { handleErrorUnique } from 'src/utils/handle.error.unique';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -21,16 +21,28 @@ export class CategoryService {
     return this.prisma.category.findMany();
   }
 
-  findOne(id: string): Promise<Category> {
-    return this.prisma.category.findUnique({
+  async verifyIdandReturnCategory(id: string): Promise<Category> {
+    const category: Category = await this.prisma.category.findUnique({
       where: { id },
     });
+
+    if (!category) {
+      throw new NotFoundException(`id ${id} not found`);
+    }
+
+    return category;
   }
 
-  update(
+  findOne(id: string): Promise<Category> {
+    return this.verifyIdandReturnCategory(id);
+  }
+
+  async update(
     id: string,
     updateCategoryDto: UpdateCategoryDto,
   ): Promise<Category | void> {
+    await this.verifyIdandReturnCategory(id);
+
     return this.prisma.category
       .update({
         where: { id },
@@ -39,10 +51,10 @@ export class CategoryService {
       .catch(handleErrorUnique);
   }
 
-  remove(id: string) {
+  async remove(id: string) {
+    await this.verifyIdandReturnCategory(id);
     return this.prisma.category.delete({
       where: { id },
-      select: { name: true },
     });
   }
 }
