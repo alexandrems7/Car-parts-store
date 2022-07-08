@@ -53,8 +53,10 @@ export class CategoryService {
 
   async remove(id: string) {
     await this.verifyIdandReturnCategory(id);
+
     return this.prisma.category.delete({
       where: { id },
+      select: { name: true },
     });
   }
 }
