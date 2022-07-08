@@ -1,13 +1,10 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { handleErrorUnique } from 'src/utils/handle.error.unique';
 
 @Injectable()
 export class UsersService {
@@ -24,7 +21,7 @@ export class UsersService {
 
     const newUser = await this.prisma.user
       .create({ data })
-      .catch(this.handleErrorUniquer);
+      .catch(handleErrorUnique);
 
     return newUser;
   }
@@ -43,16 +40,6 @@ export class UsersService {
     return user;
   }
 
-  handleErrorUniquer(error: Error): never {
-    const splitedMessage = error.message.split('`');
-
-    const errorMenssage = `input ${
-      splitedMessage[splitedMessage.length - 2]
-    } is not a single constraint UNIQUE`;
-
-    throw new UnprocessableEntityException(errorMenssage);
-  }
-
   findOne(id: string) {
     return this.verifyIdandReturnUser(id);
   }
@@ -62,7 +49,7 @@ export class UsersService {
 
     return this.prisma.user
       .update({ where: { id }, data: updateUserdto })
-      .catch(this.handleErrorUniquer);
+      .catch(handleErrorUnique);
   }
 
   async remove(id: string) {

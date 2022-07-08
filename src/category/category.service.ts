@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Category } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { handleErrorUnique } from 'src/utils/handle.error.unique';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
@@ -8,8 +9,12 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 export class CategoryService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(createCategoryDto: CreateCategoryDto): Promise<Category | void> {
-    return this.prisma.category.create({ data: createCategoryDto });
+  async create(createCategoryDto: CreateCategoryDto): Promise<Category | void> {
+    const newCategory = await this.prisma.category
+      .create({ data: createCategoryDto })
+      .catch(handleErrorUnique);
+
+    return newCategory;
   }
 
   findAll() {
@@ -26,10 +31,12 @@ export class CategoryService {
     id: string,
     updateCategoryDto: UpdateCategoryDto,
   ): Promise<Category | void> {
-    return this.prisma.category.update({
-      where: { id },
-      data: updateCategoryDto,
-    });
+    return this.prisma.category
+      .update({
+        where: { id },
+        data: updateCategoryDto,
+      })
+      .catch(handleErrorUnique);
   }
 
   remove(id: string) {
