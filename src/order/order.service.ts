@@ -1,8 +1,7 @@
-import { Injectable, Param } from '@nestjs/common';
+import { Injectable, NotFoundException, Param } from '@nestjs/common';
 import { Order } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { handleErrorUnique } from 'src/utils/handle.error.unique';
-import { veriflyIdAndReturnElement } from 'src/utils/verifly.id.and.return.order';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 
@@ -25,21 +24,25 @@ export class OrderService {
     return this.prisma.order.findMany();
   }
 
+  async veriflyIdAndReturnOrder(id: number) {
+    const module = await this.prisma.order.findUnique({ where: { id } });
+
+    if (!module) {
+      throw new NotFoundException(`id ${id} not found`);
+    }
+
+    return module;
+  }
+
   findOne(@Param('id') id: number): Promise<Order> {
-    return veriflyIdAndReturnElement(
-      id,
-      this.prisma.order.findUnique({ where: { id } }),
-    );
+    return this.veriflyIdAndReturnOrder(id);
   }
 
   async update(
     id: number,
     updateOrderDto: UpdateOrderDto,
   ): Promise<Order | void> {
-    await veriflyIdAndReturnElement(
-      id,
-      this.prisma.order.findUnique({ where: { id } }),
-    );
+    await this.veriflyIdAndReturnOrder(id);
 
     return this.prisma.order
       .update({ where: { id }, data: updateOrderDto })
@@ -47,10 +50,7 @@ export class OrderService {
   }
 
   async remove(id: number) {
-    await veriflyIdAndReturnElement(
-      id,
-      this.prisma.order.findUnique({ where: { id } }),
-    );
+    await this.veriflyIdAndReturnOrder(id);
 
     return this.prisma.order.delete({
       where: { id },

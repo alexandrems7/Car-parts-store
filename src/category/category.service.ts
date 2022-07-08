@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Category } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { handleErrorUnique } from 'src/utils/handle.error.unique';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Category } from './entities/category.entity';
 
 @Injectable()
 export class CategoryService {
