@@ -17,11 +17,19 @@ export class CategoryService {
   }
 
   findOne(id: string): Promise<Category> {
-    return this.prisma.category.findUnique(id);
+    return this.prisma.category.findUnique({
+      where: { id },
+    });
   }
 
-  update(id: string, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  update(
+    id: string,
+    updateCategoryDto: UpdateCategoryDto,
+  ): Promise<Category | void> {
+    return this.prisma.category.update({
+      where: { id },
+      data: updateCategoryDto,
+    });
   }
 
   remove(id: string) {

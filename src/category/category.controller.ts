@@ -43,7 +43,7 @@ export class CategoryController {
   update(
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
-  ) {
+  ): Promise<Category | void> {
     return this.categoryService.update(id, updateCategoryDto);
   }
 
