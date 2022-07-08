@@ -11,6 +11,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Category } from './entities/category.entity';
 
 @ApiTags('category')
 @Controller('category')
@@ -19,19 +20,21 @@ export class CategoryController {
 
   @Post()
   @ApiOperation({ summary: 'register new category' })
-  create(@Body() createCategoryDto: CreateCategoryDto) {
+  create(
+    @Body() createCategoryDto: CreateCategoryDto,
+  ): Promise<Category | void> {
     return this.categoryService.create(createCategoryDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'list all category' })
-  findAll() {
+  findAll(): Promise<Category[]> {
     return this.categoryService.findAll();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'search category by id' })
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<Category> {
     return this.categoryService.findOne(id);
   }
 
