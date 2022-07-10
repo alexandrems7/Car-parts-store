@@ -15,8 +15,8 @@ model User {
   name      String
   email     String   @unique
   password  String
-  createdAt DateTime @default(now()) @map("creat_at")
-  updatedAt DateTime @updatedAt @map("update_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("user")
 }
@@ -27,8 +27,8 @@ model Product {
   description String
   price       Float
   image       String
-  createdAt   DateTime @default(now()) @map("creat_at")
-  updatedAt   DateTime @updatedAt @map("update_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   category   Category @relation(fields: [categoryId], references: [id])
   categoryId String   @map("category_id")
@@ -39,15 +39,17 @@ model Product {
 model Order {
   id        Int      @id @default(autoincrement())
   number    Int      @unique
-  createdAt DateTime @default(now()) @map("creat_at")
-  updatedAt DateTime @updatedAt @map("update_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("order")
 }
 
 model Category {
-  id   String @id @default(uuid())
-  name String @unique
+  id        String   @id @default(uuid())
+  name      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   products Product[]
 
