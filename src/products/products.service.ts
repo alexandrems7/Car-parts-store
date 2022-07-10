@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Product } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { handleErrorUnique } from 'src/utils/handle.error.unique';
 import { CreateProductDto } from './dto/create-product.dto';
+import { FavoriteproductDto } from './dto/favorite-product';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Product } from './entities/product.entity';
 
 @Injectable()
 export class ProductsService {
@@ -56,7 +57,11 @@ export class ProductsService {
 
     return this.prisma.product.delete({
       where: { id },
-      select: { title: true, description: true },
+      select: { name: true, description: true },
     });
+  }
+
+  favorite(favoriteproductDto: FavoriteproductDto) {
+    return this.prisma.favorite.create({ data: favoriteproductDto });
   }
 }

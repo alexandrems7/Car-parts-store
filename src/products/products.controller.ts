@@ -12,6 +12,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Product } from './entities/product.entity';
+import { FavoriteproductDto } from './dto/favorite-product';
 
 @ApiTags('products')
 @Controller('products')
@@ -49,5 +50,14 @@ export class ProductsController {
   @ApiOperation({ summary: 'delete a product' })
   remove(@Param('id') id: string) {
     return this.productsService.remove(id);
+  }
+
+  @Post('favorite')
+  @ApiOperation({ summary: 'user favorite products' })
+  favorite(
+    @Param('id') id: string,
+    @Body() favoriteproductDto: FavoriteproductDto,
+  ) {
+    return this.productsService.favorite(favoriteproductDto);
   }
 }
