@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { User } from 'src/users/entities/users.entities';
 import { handleErrorUnique } from 'src/utils/handle.error.unique';
 import { CreateProductDto } from './dto/create-product.dto';
 import { FavoriteproductDto } from './dto/favorite-product';
@@ -61,7 +62,27 @@ export class ProductsService {
     });
   }
 
-  favorite(favoriteproductDto: FavoriteproductDto) {
+  async favorite(favoriteproductDto: FavoriteproductDto) {
+    const user: User = await this.prisma.user.findUnique({
+      where: { id: favoriteproductDto.userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException(
+        `user ${favoriteproductDto.userId} not found`,
+      );
+    }
+
+    const productName: Product = await this.prisma.product.findUnique({
+      where: { name: favoriteproductDto.productName },
+    });
+
+    if (!productName) {
+      throw new NotFoundException(
+        `product ${favoriteproductDto.productName} not found`,
+      );
+    }
+
     return this.prisma.favorite.create({ data: favoriteproductDto });
   }
 }

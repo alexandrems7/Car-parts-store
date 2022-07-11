@@ -71,5 +71,6 @@ model Favorite {
   product     Product @relation(fields: [productName], references: [name])
   productName String  @map("product_name")
 
+  @@unique([userId, productName])
   @@map("favorite")
 }
