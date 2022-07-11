@@ -64,4 +64,10 @@ export class ProductsController {
   disfavor(@Param('id') id: string) {
     return this.productsService.disfavor(id);
   }
+
+  @Get('favorite/:id')
+  @ApiOperation({ summary: 'list of users who have favorited a product' })
+  listUserslikedProduct(@Param('id') id: string) {
+    return this.productsService.listUserslikedProduct(id);
+  }
 }
