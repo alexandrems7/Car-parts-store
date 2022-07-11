@@ -36,13 +36,15 @@ export class UsersService {
   }
 
   findAll(): Promise<User[]> {
-    return this.prisma.user.findMany({ select: this.userDataSelection });
+    return this.prisma.user.findMany({
+      select: { ...this.userDataSelection, favorites: true },
+    });
   }
 
   async verifyIdandReturnUser(id: string): Promise<User> {
     const user: User = await this.prisma.user.findUnique({
       where: { id },
-      select: this.userDataSelection,
+      select: { ...this.userDataSelection, favorites: true },
     });
 
     if (!user) {
@@ -56,7 +58,9 @@ export class UsersService {
     return this.verifyIdandReturnUser(id);
   }
 
-  listFavoritesProducts(id: string): Promise<Favorite[]> {
+  async listFavoritesProducts(id: string): Promise<Favorite[]> {
+    await this.verifyIdandReturnUser(id);
+
     return this.prisma.favorite.findMany({
       where: { userId: id },
       select: { productName: true },

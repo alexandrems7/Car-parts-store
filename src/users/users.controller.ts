@@ -39,7 +39,7 @@ export class UsersController {
 
   @Get('favorite/:id')
   @ApiOperation({ summary: 'list all favorites the user' })
-  listFavoritesProducts(id: string): Promise<Favorite[]> {
+  listFavoritesProducts(@Param('id') id: string): Promise<Favorite[]> {
     return this.usersService.listFavoritesProducts(id);
   }
 
