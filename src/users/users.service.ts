@@ -5,6 +5,7 @@ import * as bcrypt from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { handleErrorUnique } from 'src/utils/handle.error.unique';
 import { User } from './entities/users.entities';
+import { Favorite } from 'src/favorites/entities/favorite-entity';
 
 @Injectable()
 export class UsersService {
@@ -53,6 +54,13 @@ export class UsersService {
 
   findOne(id: string) {
     return this.verifyIdandReturnUser(id);
+  }
+
+  listFavoritesProducts(id: string): Promise<Favorite[]> {
+    return this.prisma.favorite.findMany({
+      where: { userId: id },
+      select: { productName: true },
+    });
   }
 
   async update(id: string, updateUserdto: UpdateUserDto): Promise<User | void> {

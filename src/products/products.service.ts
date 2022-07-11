@@ -3,9 +3,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from 'src/users/entities/users.entities';
 import { handleErrorUnique } from 'src/utils/handle.error.unique';
 import { CreateProductDto } from './dto/create-product.dto';
-import { FavoriteproductDto } from './dto/favorite-product';
+import { FavoriteproductDto } from '../favorites/dto/favorite.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
+import { Favorite } from 'src/favorites/entities/favorite-entity';
 
 @Injectable()
 export class ProductsService {
@@ -62,7 +63,7 @@ export class ProductsService {
     });
   }
 
-  async favorite(favoriteproductDto: FavoriteproductDto) {
+  async favorite(favoriteproductDto: FavoriteproductDto): Promise<Favorite> {
     const user: User = await this.prisma.user.findUnique({
       where: { id: favoriteproductDto.userId },
     });
@@ -84,5 +85,9 @@ export class ProductsService {
     }
 
     return this.prisma.favorite.create({ data: favoriteproductDto });
+  }
+
+  disfavor(id: string) {
+    return this.prisma.favorite.delete({ where: { id } });
   }
 }
