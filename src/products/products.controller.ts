@@ -38,6 +38,12 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
+  @Get('favorite/:id')
+  @ApiOperation({ summary: 'list of users who have favorited a product' })
+  listUserslikedProduct(@Param('id') id: string) {
+    return this.productsService.listUserslikedProduct(id);
+  }
+
   @Patch(':id')
   @ApiOperation({ summary: 'update an product' })
   update(
@@ -63,11 +69,5 @@ export class ProductsController {
   @ApiOperation({ summary: 'disfavor' })
   disfavor(@Param('id') id: string) {
     return this.productsService.disfavor(id);
-  }
-
-  @Get('favorite/:id')
-  @ApiOperation({ summary: 'list of users who have favorited a product' })
-  listUserslikedProduct(@Param('id') id: string) {
-    return this.productsService.listUserslikedProduct(id);
   }
 }

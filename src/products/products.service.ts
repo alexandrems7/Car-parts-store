@@ -40,6 +40,18 @@ export class ProductsService {
     return this.verifyIdandReturnProduct(id);
   }
 
+  async listUserslikedProduct(id: string) {
+    const product: Product = await this.verifyIdandReturnProduct(id);
+
+    return this.prisma.favorite.findMany({
+      where: { productName: product.name },
+      select: {
+        productName: true,
+        user: { select: { name: true, email: true } },
+      },
+    });
+  }
+
   async update(
     id: string,
     updateProductDto: UpdateProductDto,
@@ -87,17 +99,9 @@ export class ProductsService {
     return this.prisma.favorite.create({ data: favoriteproductDto });
   }
 
-  disfavor(id: string) {
-    return this.prisma.favorite.delete({ where: { id } });
-  }
+  async disfavor(id: string) {
+    await this.verifyIdandReturnProduct(id);
 
-  async listUserslikedProduct(id: string) {
-    const product: Product = await this.prisma.product.findUnique({
-      where: { id },
-    });
-    return this.prisma.favorite.findMany({
-      where: { productName: product.name },
-      select: { productName: true, user: true },
-    });
+    return this.prisma.favorite.delete({ where: { id } });
   }
 }
