@@ -1,4 +1,4 @@
-export class Order {
+export class Table {
   id: number;
   number: number;
   createdAt: Date;
