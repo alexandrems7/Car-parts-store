@@ -11,6 +11,11 @@ export class OrdersService {
     id: true,
     tableNumber: true,
     userId: true,
+    user: {
+      select: {
+        name: true,
+      },
+    },
     createdAt: true,
     products: { select: { name: true } },
   };
