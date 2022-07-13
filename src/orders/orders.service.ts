@@ -17,7 +17,6 @@ export class OrdersService {
       },
     },
     createdAt: true,
-    products: { select: { name: true } },
   };
 
   create(createOrderDto: CreateOrderDto) {
@@ -33,7 +32,12 @@ export class OrdersService {
         },
       },
       products: {
-        connect: createOrderDto.products.map((element) => ({ id: element })),
+        createMany: {
+          data: createOrderDto.products.map((element) => ({
+            productId: element.productId,
+            quantity: element.quantity,
+          })),
+        },
       },
     };
 
