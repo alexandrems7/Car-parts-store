@@ -12,11 +12,19 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Product } from './entities/product.entity';
+import { FavoriteproductDto } from '../favorites/dto/favorite.dto';
+import { Favorite } from 'src/favorites/entities/favorite-entity';
 
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
+
+  @Post()
+  @ApiOperation({ summary: 'register new proudct' })
+  create(@Body() createProductDto: CreateProductDto): Promise<Product | void> {
+    return this.productsService.create(createProductDto);
+  }
 
   @Get()
   @ApiOperation({ summary: 'list all products present in the database' })
@@ -30,10 +38,19 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
-  @Post()
-  @ApiOperation({ summary: 'register new proudct' })
-  create(@Body() createProductDto: CreateProductDto): Promise<Product | void> {
-    return this.productsService.create(createProductDto);
+  @Get('favorite/:id')
+  @ApiOperation({ summary: 'list of users who have favorited a product' })
+  listUserslikedProduct(@Param('id') id: string) {
+    return this.productsService.listUserslikedProduct(id);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'update an product' })
+  update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ): Promise<Product | void> {
+    return this.productsService.update(id, updateProductDto);
   }
 
   @Delete(':id')
@@ -42,12 +59,15 @@ export class ProductsController {
     return this.productsService.remove(id);
   }
 
-  @Patch(':id')
-  @ApiOperation({ summary: 'update a product' })
-  update(
-    @Param('id') id: string,
-    @Body() updateProductDto: UpdateProductDto,
-  ): Promise<Product | void> {
-    return this.productsService.update(id, updateProductDto);
+  @Post('favorite')
+  @ApiOperation({ summary: 'user favorite products' })
+  favorite(@Body() favoriteproductDto: FavoriteproductDto): Promise<Favorite> {
+    return this.productsService.favorite(favoriteproductDto);
+  }
+
+  @Delete('disfavor/:id')
+  @ApiOperation({ summary: 'disfavor' })
+  disfavor(@Param('id') id: string) {
+    return this.productsService.disfavor(id);
   }
 }

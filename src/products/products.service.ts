@@ -1,16 +1,25 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
-import { Product } from '@prisma/client';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { User } from 'src/users/entities/users.entities';
+import { handleErrorUnique } from 'src/utils/handle.error.unique';
 import { CreateProductDto } from './dto/create-product.dto';
+import { FavoriteproductDto } from '../favorites/dto/favorite.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Product } from './entities/product.entity';
+import { Favorite } from 'src/favorites/entities/favorite-entity';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async create(createProductDto: CreateProductDto): Promise<Product | void> {
+    const newProduct = await this.prisma.product
+      .create({ data: createProductDto })
+      .catch(handleErrorUnique);
+
+    return newProduct;
+  }
 
   findAll(): Promise<Product[]> {
     return this.prisma.product.findMany();
@@ -28,37 +37,19 @@ export class ProductsService {
     return product;
   }
 
-  handleErrorUnique(error: Error): never {
-    const splitedMessage = error.message.split('`');
-
-    const errorMenssage = `input ${
-      splitedMessage[splitedMessage.length - 2]
-    } is not a single constraint UNIQUE`;
-
-    throw new UnprocessableEntityException(errorMenssage);
-  }
-
   findOne(id: string) {
     return this.verifyIdandReturnProduct(id);
   }
 
-  async create(createProductDto: CreateProductDto): Promise<Product | void> {
-    const data: CreateProductDto = {
-      title: createProductDto.title,
-      description: createProductDto.description,
-      price: createProductDto.price,
-      image: createProductDto.image,
-    };
+  async listUserslikedProduct(id: string) {
+    const product: Product = await this.verifyIdandReturnProduct(id);
 
-    return this.prisma.product.create({ data }).catch(this.handleErrorUnique);
-  }
-
-  async remove(id: string) {
-    await this.verifyIdandReturnProduct(id);
-
-    return this.prisma.product.delete({
-      where: { id },
-      select: { title: true, description: true },
+    return this.prisma.favorite.findMany({
+      where: { productName: product.name },
+      select: {
+        productName: true,
+        user: { select: { name: true, email: true } },
+      },
     });
   }
 
@@ -73,6 +64,54 @@ export class ProductsService {
         where: { id },
         data: updateProductDto,
       })
-      .catch(this.handleErrorUnique);
+      .catch(handleErrorUnique);
+  }
+
+  async remove(id: string) {
+    await this.verifyIdandReturnProduct(id);
+
+    return this.prisma.product.delete({
+      where: { id },
+      select: { name: true, description: true },
+    });
+  }
+
+  async favorite(favoriteproductDto: FavoriteproductDto): Promise<Favorite> {
+    const user: User = await this.prisma.user.findUnique({
+      where: { id: favoriteproductDto.userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException(
+        `user ${favoriteproductDto.userId} not found`,
+      );
+    }
+
+    const productName: Product = await this.prisma.product.findUnique({
+      where: { name: favoriteproductDto.productName },
+    });
+
+    if (!productName) {
+      throw new NotFoundException(
+        `product ${favoriteproductDto.productName} not found`,
+      );
+    }
+
+    const data: Prisma.FavoriteCreateInput = {
+      user: {
+        connect: { id: favoriteproductDto.userId },
+      },
+      product: {
+        connect: { name: favoriteproductDto.productName },
+      },
+    };
+
+    return this.prisma.favorite.create({ data });
+  }
+
+  async disfavor(id: string) {
+    await this.verifyIdandReturnProduct(id);
+
+    return this.prisma.favorite.delete({ where: { id } });
   }
 }

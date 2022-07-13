@@ -1,45 +1,23 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { handleErrorUnique } from 'src/utils/handle.error.unique';
+import { User } from './entities/users.entities';
+import { Favorite } from 'src/favorites/entities/favorite-entity';
 
 @Injectable()
 export class UsersService {
+  private userDataSelection = {
+    id: true,
+    name: true,
+    email: true,
+    createdAt: true,
+    updatedAt: true,
+  };
+
   constructor(private readonly prisma: PrismaService) {}
-
-  findAll(): Promise<User[]> {
-    return this.prisma.user.findMany();
-  }
-
-  async verifyIdandReturnUser(id: string): Promise<User> {
-    const user: User = await this.prisma.user.findUnique({ where: { id } });
-
-    if (!user) {
-      throw new NotFoundException(`id ${id} not found`);
-    }
-
-    return user;
-  }
-
-  handleErrorUniquer(error: Error): never {
-    const splitedMessage = error.message.split('`');
-
-    const errorMenssage = `input ${
-      splitedMessage[splitedMessage.length - 2]
-    } is not a single constraint UNIQUE`;
-
-    throw new UnprocessableEntityException(errorMenssage);
-  }
-
-  findOne(id: string) {
-    return this.verifyIdandReturnUser(id);
-  }
 
   async create(createUserDto: CreatUserDto): Promise<User | void> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 8);
@@ -50,15 +28,42 @@ export class UsersService {
       password: hashedPassword,
     };
 
-    return this.prisma.user.create({ data }).catch(this.handleErrorUniquer);
+    const newUser = await this.prisma.user
+      .create({ data, select: this.userDataSelection })
+      .catch(handleErrorUnique);
+
+    return newUser;
   }
 
-  async remove(id: string) {
+  findAll(): Promise<User[]> {
+    return this.prisma.user.findMany({
+      select: { ...this.userDataSelection, favorites: true },
+    });
+  }
+
+  async verifyIdandReturnUser(id: string): Promise<User> {
+    const user: User = await this.prisma.user.findUnique({
+      where: { id },
+      select: { ...this.userDataSelection, favorites: true },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`id ${id} not found`);
+    }
+
+    return user;
+  }
+
+  findOne(id: string) {
+    return this.verifyIdandReturnUser(id);
+  }
+
+  async listFavoritesProducts(id: string): Promise<Favorite[]> {
     await this.verifyIdandReturnUser(id);
 
-    return this.prisma.user.delete({
-      where: { id },
-      select: { name: true, email: true },
+    return this.prisma.favorite.findMany({
+      where: { userId: id },
+      select: { productName: true },
     });
   }
 
@@ -66,7 +71,20 @@ export class UsersService {
     await this.verifyIdandReturnUser(id);
 
     return this.prisma.user
-      .update({ where: { id }, data: updateUserdto })
-      .catch(this.handleErrorUniquer);
+      .update({
+        where: { id },
+        data: updateUserdto,
+        select: this.userDataSelection,
+      })
+      .catch(handleErrorUnique);
+  }
+
+  async remove(id: string) {
+    await this.verifyIdandReturnUser(id);
+
+    return this.prisma.user.delete({
+      where: { id },
+      select: this.userDataSelection,
+    });
   }
 }
