@@ -1,12 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { domainToASCII } from 'url';
 import { CreateOrderDto } from './dto/create-order.dto';
 
 @Injectable()
 export class OrdersService {
   constructor(private readonly prisma: PrismaService) {}
+
+  selectingInformation = {
+    id: true,
+    tableNumber: true,
+    userId: true,
+    createdAt: true,
+    products: { select: { name: true } },
+  };
 
   create(createOrderDto: CreateOrderDto) {
     const data: Prisma.OrderCreateInput = {
@@ -27,18 +34,12 @@ export class OrdersService {
 
     return this.prisma.order.create({
       data,
-      select: {
-        id: true,
-        tableNumber: true,
-        userId: true,
-        createdAt: true,
-        products: { select: { name: true } },
-      },
+      select: this.selectingInformation,
     });
   }
 
   findAll() {
-    return `This action returns all orders`;
+    return this.prisma.order.findMany({ select: this.selectingInformation });
   }
 
   findOne(id: number) {
