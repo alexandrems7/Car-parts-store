@@ -14,6 +14,17 @@ export class OrdersService {
     user: {
       select: {
         name: true,
+        email: true,
+      },
+    },
+    products: {
+      select: {
+        quantity: true,
+        product: {
+          select: {
+            name: true,
+          },
+        },
       },
     },
     createdAt: true,
