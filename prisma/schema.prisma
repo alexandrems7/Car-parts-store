@@ -44,17 +44,6 @@ model Product {
   @@map("product")
 }
 
-model Table {
-  id        Int      @id @default(autoincrement())
-  number    Int      @unique
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  orders Order[]
-
-  @@map("table")
-}
-
 model Category {
   id        String   @id @default(uuid())
   name      String   @unique
@@ -84,9 +73,6 @@ model Favorite {
 model Order {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now()) @map("created_at")
-
-  table       Table? @relation(fields: [tableNumber], references: [number], onDelete: SetNull)
-  tableNumber Int?   @map("table_number")
 
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   userId String? @map("user_id")
