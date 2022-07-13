@@ -23,6 +23,6 @@ export class OrdersController {
   @Get(':id')
   @ApiOperation({ summary: 'search order for id' })
   findOne(@Param('id') id: string) {
-    return this.ordersService.findOne(+id);
+    return this.ordersService.findOne(id);
   }
 }

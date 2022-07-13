@@ -42,7 +42,10 @@ export class OrdersService {
     return this.prisma.order.findMany({ select: this.selectingInformation });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  findOne(id: string) {
+    return this.prisma.order.findUnique({
+      where: { id },
+      select: this.selectingInformation,
+    });
   }
 }
