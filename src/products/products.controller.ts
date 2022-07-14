@@ -17,7 +17,9 @@ import { FavoriteproductDto } from '../favorites/dto/favorite.dto';
 import { Favorite } from 'src/favorites/entities/favorite-entity';
 import { AuthGuard } from '@nestjs/passport';
 
+@UseGuards(AuthGuard())
 @ApiTags('products')
+@ApiBearerAuth()
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
@@ -62,9 +64,7 @@ export class ProductsController {
   }
 
   @Post('favorite')
-  @UseGuards(AuthGuard())
   @ApiOperation({ summary: 'user favorite products' })
-  @ApiBearerAuth()
   favorite(@Body() favoriteproductDto: FavoriteproductDto): Promise<Favorite> {
     return this.productsService.favorite(favoriteproductDto);
   }
