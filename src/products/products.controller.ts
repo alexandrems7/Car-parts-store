@@ -6,14 +6,16 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Product } from './entities/product.entity';
 import { FavoriteproductDto } from '../favorites/dto/favorite.dto';
 import { Favorite } from 'src/favorites/entities/favorite-entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('products')
 @Controller('products')
@@ -60,7 +62,9 @@ export class ProductsController {
   }
 
   @Post('favorite')
+  @UseGuards(AuthGuard())
   @ApiOperation({ summary: 'user favorite products' })
+  @ApiBearerAuth()
   favorite(@Body() favoriteproductDto: FavoriteproductDto): Promise<Favorite> {
     return this.productsService.favorite(favoriteproductDto);
   }
