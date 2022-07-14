@@ -3,10 +3,15 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from 'src/users/entities/users.entities';
 import { LoginDto } from './dto/dto.login';
 import * as bcrypt from 'bcryptjs';
+import { LoginResponseDto } from './dto/login-response.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   userValidation(data: User | boolean) {
     if (!data) {
@@ -14,7 +19,7 @@ export class AuthService {
     }
   }
 
-  async login(loginDto: LoginDto) {
+  async login(loginDto: LoginDto): Promise<LoginResponseDto> {
     const { email, password } = loginDto;
 
     const user: User = await this.prisma.user.findUnique({ where: { email } });
@@ -30,6 +35,8 @@ export class AuthService {
 
     delete user.password;
 
-    return { token: 'Bearer Token', user };
+    const token: string = this.jwtService.sign({ email, id: user.id });
+
+    return { token, user };
   }
 }
