@@ -8,15 +8,28 @@ import * as bcrypt from 'bcryptjs';
 export class AuthService {
   constructor(private readonly prisma: PrismaService) {}
 
+  userValidation(data: User | boolean) {
+    if (!data) {
+      throw new NotFoundException('Invalid email or password');
+    }
+  }
+
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
     const user: User = await this.prisma.user.findUnique({ where: { email } });
 
-    if (!user) {
-      throw new NotFoundException('Invalid email or password');
-    }
+    this.userValidation(user);
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch: boolean = await bcrypt.compare(
+      password,
+      user.password,
+    );
+
+    this.userValidation(passwordMatch);
+
+    delete user.password;
+
+    return { token: 'Bearer Token', user };
   }
 }
