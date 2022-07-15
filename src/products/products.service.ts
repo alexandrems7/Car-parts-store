@@ -110,7 +110,13 @@ export class ProductsService {
   }
 
   async disfavor(id: string) {
-    await this.verifyIdandReturnProduct(id);
+    const favorite: Favorite = await this.prisma.favorite.findUnique({
+      where: { id },
+    });
+
+    if (!favorite) {
+      throw new NotFoundException(`id ${id} not found`);
+    }
 
     return this.prisma.favorite.delete({ where: { id } });
   }

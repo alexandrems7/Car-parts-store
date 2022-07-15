@@ -25,7 +25,9 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'register new proudct' })
+  @ApiOperation({
+    summary: 'register new product. The category must be created before',
+  })
   create(@Body() createProductDto: CreateProductDto): Promise<Product | void> {
     return this.productsService.create(createProductDto);
   }
@@ -70,7 +72,9 @@ export class ProductsController {
   }
 
   @Delete('disfavor/:id')
-  @ApiOperation({ summary: 'disfavor' })
+  @ApiOperation({
+    summary: 'disfavor, use the id generated when favoring the product',
+  })
   disfavor(@Param('id') id: string) {
     return this.productsService.disfavor(id);
   }
