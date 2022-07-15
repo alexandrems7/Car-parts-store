@@ -18,12 +18,11 @@ async function bootstrap() {
     .setDescription('API Car-Pars-Store')
     .setVersion('1.0')
     .addTag('status')
-    .addTag('users')
-    .addTag('products')
-    .addTag('category')
-    .addTag('favorites')
-    .addTag('orders')
     .addTag('auth')
+    .addTag('users/favorites')
+    .addTag('category')
+    .addTag('products/favorites')
+    .addTag('orders')
     .addBearerAuth()
     .build();
 
