@@ -45,7 +45,7 @@ export class UsersController {
 
   @UseGuards(AuthGuard())
   @Get('favorite/:id')
-  @ApiOperation({ summary: 'list all favorites the user' })
+  @ApiOperation({ summary: 'list all user favorites, use userid' })
   @ApiBearerAuth()
   listFavoritesProducts(@Param('id') id: string): Promise<Favorite[]> {
     return this.usersService.listFavoritesProducts(id);
