@@ -9,7 +9,6 @@ export class OrdersService {
 
   selectingInformation = {
     id: true,
-    tableNumber: true,
     userId: true,
     user: {
       select: {
@@ -32,11 +31,6 @@ export class OrdersService {
 
   create(createOrderDto: CreateOrderDto) {
     const data: Prisma.OrderCreateInput = {
-      table: {
-        connect: {
-          number: createOrderDto.tableNumber,
-        },
-      },
       user: {
         connect: {
           id: createOrderDto.userId,
