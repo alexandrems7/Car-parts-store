@@ -30,11 +30,9 @@ There is login authentication with the JWT token. SQL Pstgres database, using th
 
 ## 📃 Documentation
 
-````bash
-
 <a href="https://car-parts-store-production.up.railway.app/docs" target="blank"> Swagger </a>
 
-````
+
 
 ### 🔧 Installation
 
