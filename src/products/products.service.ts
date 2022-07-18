@@ -47,6 +47,7 @@ export class ProductsService {
     return this.prisma.favorite.findMany({
       where: { productName: product.name },
       select: {
+        id: true,
         productName: true,
         user: { select: { name: true, email: true } },
       },
