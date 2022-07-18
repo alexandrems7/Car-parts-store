@@ -19,9 +19,9 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('status')
     .addTag('auth')
-    .addTag('users/favorites')
+    .addTag('users')
     .addTag('category')
-    .addTag('products/favorites')
+    .addTag('products')
     .addTag('orders')
     .addBearerAuth()
     .build();
