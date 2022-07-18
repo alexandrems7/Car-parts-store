@@ -2,9 +2,9 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="150" alt="Nest Logo" /></a>
   <img src="https://media.discordapp.net/attachments/967162864408346697/998699832615129228/typescript-logo.png" width="150" alt="TypeScript Logo" />
   <img src="https://media.discordapp.net/attachments/967162864408346697/998716437319405658/logo-javascript-icon-512.png" width="150" alt="JavaScript Logo" />
-  <img src="https://media.discordapp.net/attachments/967162864408346697/998717918869192794/logo-node-js-512.png" width="150" alt="NodeJs Logo" />
-  <img src="https://media.discordapp.net/attachments/967162864408346697/998699875438960690/prisma.png" width="150" alt="Prisma Logo" />
-   <img src="https://media.discordapp.net/attachments/967162864408346697/998718004256845854/pngwing.com.png" width="150" alt="Postgres SQL Logo" />
+  <img src="https://media.discordapp.net/attachments/967162864408346697/998717918869192794/logo-node-js-512.png" width="210" alt="NodeJs Logo" />
+  <img src="https://media.discordapp.net/attachments/967162864408346697/998699875438960690/prisma.png" width="210" alt="Prisma Logo" />
+   <img src="https://media.discordapp.net/attachments/967162864408346697/998718004256845854/pngwing.com.png" width="210" alt="Postgres SQL Logo" />
 </p>
 
 
